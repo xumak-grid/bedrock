@@ -1,0 +1,63 @@
+apiVersion: rbac.authorization.k8s.io/v1beta1
+kind: ClusterRoleBinding
+metadata:
+  name: bedrock-api
+roleRef:
+  apiGroup: rbac.authorization.k8s.io
+  kind: ClusterRole
+  name: bedrock-api
+subjects:
+- kind: ServiceAccount
+  name: bedrock-api
+  namespace: bedrock
+---
+apiVersion: rbac.authorization.k8s.io/v1beta1
+kind: ClusterRole
+metadata:
+  name: bedrock-api
+rules:
+- apiGroups:
+  - aem.xumak.io
+  resources:
+  - aemdeployments
+  verbs:
+  - "*"
+- apiGroups:
+  - certmanager.k8s.io
+  resources:
+  - certificates
+  verbs:
+  - "*"
+- apiGroups:
+  - ""
+  resources:
+  - configmaps
+  - secrets
+  - services
+  - namespaces
+  verbs:
+  - "*"
+- apiGroups:
+  - ""
+  resources:
+  - pods
+  verbs:
+  - list
+- apiGroups:
+  - "batch" 
+  resources:
+  - jobs
+  verbs:
+  - "*"
+- apiGroups:
+  - "apps" 
+  resources:
+  - statefulsets
+  verbs:
+  - "*"
+- apiGroups:
+  - extensions
+  resources:
+  - ingresses
+  verbs:
+  - "*"

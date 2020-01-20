@@ -1,0 +1,1183 @@
+# https://github.com/OAI/OpenAPI-Specification/blob/master/versions/3.0.0.md
+openapi: "3.0.0"
+info:
+  version: v1
+  title: Bedrock API
+  description: "Bedrock api k8s"
+paths:
+  /clients:
+    get:
+      summary: List all clients
+      tags:
+        - Clients
+      responses:
+        '200':
+          description: all clients
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Client'
+        default:
+          description: unexpected error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+    post:
+      summary: Create a client
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/ClientPost'
+      tags:
+        - Clients
+      responses:
+        '201':
+          description: client created
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ClientPostResponse'
+        default:
+          description: unexpected error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+  /clients/{clientId}:
+    get:
+      summary: Info for an specific client
+      parameters:
+        - name: clientId
+          in: path
+          required: true
+          schema:
+            type: string
+      tags:
+        - Clients
+      responses:
+        '200':
+          description: client status
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Client'
+        default:
+          description: unexpected error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+    delete:
+      summary: Delete an specific client
+      parameters:
+        - name: clientId
+          in: path
+          required: true
+          schema:
+            type: string
+      tags:
+        - Clients
+      responses:
+        '200':
+          description: client deleted
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Client'
+        default:
+          description: unexpected error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+  /clients/{clientId}/environments:
+    get:
+      summary: List of environments for the client
+      description: An environment only exist if a deployment exist inside the environment
+      parameters:
+        - name: clientId
+          in: path
+          required: true
+          schema:
+            type: string
+      tags:
+        - Environments
+      responses:
+        '200':
+          description: all environments
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Environment'
+        default:
+          description: unexpected error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+  /clients/{clientId}/environments/{environmentId}/aem:
+    get:
+      summary: Info of the AEM deployment
+      description: the clientId should be created previously
+      parameters:
+        - name: clientId
+          in: path
+          required: true
+          schema:
+            type: string
+        - name: environmentId
+          in: path
+          required: true
+          schema:
+            type: string
+      tags:
+        - AEM Deployment
+      responses:
+        '200':
+          description: deployment status
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/AEMDeployment'
+        default:
+          description: unexpected error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+    post:
+      summary: create the AEM deployment
+      description: the clientId should be created previously, the AEM deployment is created in the desired environmentId
+      parameters:
+        - name: clientId
+          in: path
+          required: true
+          schema:
+            type: string
+        - name: environmentId
+          in: path
+          required: true
+          schema:
+            type: string
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/AEMDeployment'
+      tags:
+        - AEM Deployment
+      responses:
+        '201':
+          description: AEM deployment created
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/AEMDeployment'
+        default:
+          description: unexpected error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+    patch:
+      summary: Update the AEM deployment
+      description: the clientId and AEM deployment should be created previously
+      parameters:
+        - name: clientId
+          in: path
+          required: true
+          schema:
+            type: string
+        - name: environmentId
+          in: path
+          required: true
+          schema:
+            type: string
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/AEMDeployment'
+      tags:
+        - AEM Deployment
+      responses:
+        '200':
+          description: deployment updated
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/AEMDeployment'
+        default:
+          description: unexpected error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+    delete:
+      summary: Delete an specific AEM deployment
+      parameters:
+        - name: clientId
+          in: path
+          required: true
+          schema:
+            type: string
+        - name: environmentId
+          in: path
+          required: true
+          schema:
+            type: string
+      tags:
+        - AEM Deployment
+      responses:
+        '200':
+          description: deployment deleted
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/AEMDeployment'
+        default:
+          description: unexpected error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+  /clients/{clientId}/environments/{environmentId}/aem/instances:
+    get:
+      summary: list of instances in an AEM deployment
+      parameters:
+        - name: clientId
+          in: path
+          required: true
+          schema:
+            type: string
+        - name: environmentId
+          in: path
+          required: true
+          schema:
+            type: string
+      tags:
+        - AEM Deployment
+      responses:
+        '200':
+          description: list of instances
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Instance'
+        default:
+          description: unexpected error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+  /images/aem/list:
+    get:
+      summary: get all aem images available in the system
+      tags:
+        - AEM Deployment
+      responses:
+        '200':
+          description: list of aem images
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/SimpleResourceList'
+  /images/dispatcher/list:
+    get:
+      summary: get all dispatcher images available in the system
+      tags:
+        - AEM Deployment
+      responses:
+        '200':
+          description: list of dispatcher images
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/SimpleResourceList'
+  /instances/type/list:
+    get:
+      summary: get all instances types available in the system
+      tags:
+        - AEM Deployment
+      responses:
+        '200':
+          description: list of instance images
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/SimpleResourceList'
+  /clients/{clientId}/artifactory:
+    post:
+      summary: Create a artifact manager
+      description: The clientId should be created previously, the artifactoryId is from the vendors artifactory list
+      parameters:
+        - name: clientId
+          in: path
+          required: true
+          schema:
+            type: string
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Artifactory'
+      tags:
+        - Artifactory Manager
+      responses:
+        '201':
+          description: Artifact created
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ArtifactorySpec'
+        default:
+          description: unexpected error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+  /clients/{clientId}/artifactory/{artifactoryId}:
+    get:
+      summary: Get the artifact manager
+      description: the clientId should be created previously, as well as the artifactoryId
+      parameters:
+        - name: clientId
+          in: path
+          required: true
+          schema:
+            type: string
+        - name: artifactoryId
+          in: path
+          required: true
+          schema:
+            type: string
+      tags:
+        - Artifactory Manager
+      responses:
+        '200':
+          description: artifact manager status
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ArtifactoryGetSpec'
+        default:
+          description: unexpected error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+    delete:
+      summary: Delete the artifact manager
+      parameters:
+        - name: clientId
+          in: path
+          required: true
+          schema:
+            type: string
+        - name: artifactoryId
+          in: path
+          required: true
+          schema:
+            type: string
+      tags:
+        - Artifactory Manager
+      responses:
+        '200':
+          description: artifact manager deleted
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ArtifactoryGetSpec'
+        default:
+          description: unexpected error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+  /clients/{clientId}/scm:
+    post:
+      summary: Create a source control manager
+      description: The clientId should be created previously, the scmId is from the vendors source control manager list
+      parameters:
+        - name: clientId
+          in: path
+          required: true
+          schema:
+            type: string
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/SCM'
+      tags:
+        - Source Control Manager
+      responses:
+        '201':
+          description: Source control manager created
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/SCMSpec'
+        default:
+          description: unexpected error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+  /clients/{clientId}/scm/{scmId}:
+    get:
+      summary: Get the source control manager
+      description: the clientId should be created previously, as well as the scmId
+      parameters:
+        - name: clientId
+          in: path
+          required: true
+          schema:
+            type: string
+        - name: scmId
+          in: path
+          required: true
+          schema:
+            type: string
+      tags:
+        - Source Control Manager
+      responses:
+        '200':
+          description: source control manager status
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/SCMGetSpec'
+        default:
+          description: unexpected error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+    delete:
+      summary: Delete the source control manager
+      parameters:
+        - name: clientId
+          in: path
+          required: true
+          schema:
+            type: string
+        - name: scmId
+          in: path
+          required: true
+          schema:
+            type: string
+      tags:
+        - Source Control Manager
+      responses:
+        '200':
+          description: source control manager deleted
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/SCMGetSpec'
+        default:
+          description: unexpected error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+  /clients/{clientId}/ci:
+    post:
+      summary: Create a continuous integration manager
+      description: The clientId should be created previously, the ciId is from the vendors continuous integration manager list
+      parameters:
+        - name: clientId
+          in: path
+          required: true
+          schema:
+            type: string
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CI'
+      tags:
+        - Continuous Integration Manager
+      responses:
+        '201':
+          description: Continuous integration manager created
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CISpec'
+        default:
+          description: unexpected error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+  /clients/{clientId}/ci/{ciId}:
+    get:
+      summary: Get the continuous integration manager
+      description: the clientId should be created previously, as well as the ciId
+      parameters:
+        - name: clientId
+          in: path
+          required: true
+          schema:
+            type: string
+        - name: ciId
+          in: path
+          required: true
+          schema:
+            type: string
+      tags:
+        - Continuous Integration Manager
+      responses:
+        '200':
+          description: continuous integration manager status
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CIGetSpec'
+        default:
+          description: unexpected error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+    delete:
+      summary: Delete the source control manager
+      parameters:
+        - name: clientId
+          in: path
+          required: true
+          schema:
+            type: string
+        - name: ciId
+          in: path
+          required: true
+          schema:
+            type: string
+      tags:
+        - Continuous Integration Manager
+      responses:
+        '200':
+          description: continuous integration manager deleted
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CIGetSpec'
+        default:
+          description: unexpected error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+  /clients/{clientId}/tools/toolbelt:
+    get:
+      summary: Get info toolbelt box
+      description: the clientId should be created previously
+      parameters:
+        - name: clientId
+          in: path
+          required: true
+          schema:
+            type: string
+      tags:
+        - Toolbelts
+      responses:
+        '200':
+          description: toolbelt status
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Toolbelt'
+        default:
+          description: unexpected error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+    post:
+      summary: Create toolbelt box
+      parameters:
+        - name: clientId
+          in: path
+          required: true
+          schema:
+            type: string
+      tags:
+        - Toolbelts
+      responses:
+        '201':
+          description: toolblet created
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Toolbelt'
+        default:
+          description: unexpected error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+    delete:
+      summary: Delete toolbelt box
+      parameters:
+        - name: clientId
+          in: path
+          required: true
+          schema:
+            type: string
+      tags:
+        - Toolbelts
+      responses:
+        '200':
+          description: toolbelt deleted
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Toolbelt'
+        default:
+          description: unexpected error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+  /clients/{clientId}/environments/{environmentId}/aem/dispatcherconfig:
+    get:
+      summary: Get the environment dispatcher configuration
+      parameters:
+        - name: clientId
+          in: path
+          required: true
+          schema:
+            type: string
+        - name: environmentId
+          in: path
+          required: true
+          schema:
+            type: string
+      tags:
+        - Config Maps
+      responses:
+        '200':
+          description: Dispatcher configuration
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/DispatcherConfig'
+        default:
+          description: unexpected error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+    patch:
+      summary: Update the environment dispatcher configuration
+      parameters:
+        - name: clientId
+          in: path
+          required: true
+          schema:
+            type: string
+        - name: environmentId
+          in: path
+          required: true
+          schema:
+            type: string
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/DispatcherConfig'
+      tags:
+        - Config Maps
+      responses:
+        '201':
+          description: Dispatcher configuration updated
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/DispatcherConfig'
+        default:
+          description: unexpected error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+  /vendors/artifactory/list:
+    get:
+      summary: get all artifactory vendors available in the system
+      tags:
+        - Artifactory Manager
+      responses:
+        '200':
+          description: list of artifactory vendors
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ResourceList'
+  /vendors/ci/list:
+    get:
+      summary: get all CI vendors available in the system
+      tags:
+        - Continuous Integration Manager
+      responses:
+        '200':
+          description: list of CI vendors
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CIList'
+  /vendors/scm/list:
+    get:
+      summary: get all source control managers vendors available in the system
+      tags:
+        - Source Control Manager
+      responses:
+        '200':
+          description: list of artifactory vendors
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ResourceList'
+components:
+  schemas:
+    Environment:
+      properties:
+        environmentId:
+          type: string
+    AEMDeployment:
+      properties:
+        clientId:
+          type: string
+        environmentId:
+          type: string
+        spec:
+          $ref: '#/components/schemas/AEMDeploymentSpec'
+        status:
+          type: string
+    AEMDeploymentSpec:
+      properties:
+        authors:
+          $ref: '#/components/schemas/Config'
+        publishers:
+          $ref: '#/components/schemas/Config'
+        dispatchers:
+          $ref: '#/components/schemas/Config'
+        version:
+          type: string
+        dispatcher_version:
+          type: string
+    Config:
+      properties:
+        type:
+          type: string
+        replicas:
+          type: integer
+          format: int32
+    Instance:
+      properties:
+        name:
+          type: string
+        account:
+          type: string
+        environment:
+          type: string
+        runmode:
+          type: string
+        running:
+          type: boolean
+        ready:
+          type: boolean
+    Client:
+      required:
+        - clientId
+      properties:
+        clientId:
+          type: string
+        customConfig:
+          type: boolean
+    ClientPost:
+      required:
+        - clientId
+        - customConfig
+      properties:
+        clientId:
+          type: string
+        customConfig:
+          type: boolean
+        configuration:
+          $ref: '#/components/schemas/ClientPostConfiguration'
+        meta:
+          type: array
+          $ref: '#/components/schemas/Meta'
+    ClientPostConfiguration:
+      properties:
+        fullCompanyName:
+          type: string
+        adminEmail:
+          type: string
+        environments:
+          type: array
+          items:
+            type: string
+        aemInstancesVersion:
+          type: string
+        aemInstancesType:
+          type: string
+        dispatcherInstancesVersion:
+          type: string
+        dispatcherInstancesType:
+          type: string
+        initialRepositoryType:
+          type: string
+    ClientPostResponse:
+      properties:
+        Client:
+          $ref: '#/components/schemas/ClientPost'
+        AEMDeployments:
+          type: array
+          $ref: '#/components/schemas/AEMDeployment'
+        Artifactory:
+          $ref: '#/components/schemas/Artifactory'
+        SCM:
+          $ref: '#/components/schemas/SCM'
+        CI:
+          $ref: '#/components/schemas/CI'
+        Toolbelt:
+          $ref: '#/components/schemas/Toolbelt'
+    Artifactory:
+      properties:
+        artifactoryId:
+          type: string
+        image:
+          type: string
+        customConfig:
+          type: boolean
+        configuration:
+          $ref: '#/components/schemas/ArtifactoryConfiguration'
+    ArtifactoryConfiguration:
+      properties:
+        groups:
+          type: array
+          items:
+            $ref: '#/components/schemas/ArtifactoryGroup'
+        hosteds:
+          type: array
+          items:
+            $ref: '#/components/schemas/ArtifactoryHosted'
+        proxies:
+          type: array
+          items:
+            $ref: '#/components/schemas/ArtifactoryProxy'
+    ArtifactoryGroup:
+      properties:
+        name:
+          type: string
+        members:
+          type: array
+          items:
+            type: string
+    ArtifactoryHosted:
+      properties:
+        name:
+          type: string
+        versionPolicy:
+          type: string
+        layoutPolicy:
+          type: string
+    ArtifactoryProxy:
+      properties:
+        name:
+          type: string
+        versionPolicy:
+          type: string
+        layoutPolicy:
+          type: string
+        remoteUrl:
+          type: string
+        requiredAuth:
+          type: boolean
+        authentication:
+          $ref: '#/components/schemas/ArtifactoryProxyAuthentication'
+    ArtifactoryProxyAuthentication:
+      properties:
+        username:
+          type: string
+        password:
+          type: string
+
+    ArtifactorySpec:
+      properties:
+        artifactoryId:
+          type: string
+        serverName:
+          type: string
+        ingressName:
+          type: string
+        image:
+          type: string
+        serviceName:
+          type: string
+        projectName:
+          type: string
+        host:
+          type: string
+    ArtifactoryGetSpec:
+      properties:
+        artifactoryId:
+          type: string
+        serverName:
+          type: string
+        ingressName:
+          type: string
+        serviceName:
+          type: string
+        host:
+          type: string
+    SCM:
+      properties:
+        scmId:
+          type: string
+        image:
+          type: string
+        customConfig:
+          type: boolean
+        configuration:
+          $ref: '#/components/schemas/SCMConfiguration'
+    SCMConfiguration:
+      properties:
+        init_data:
+          $ref: '#/components/schemas/SCMInitData'
+        organizations:
+          type: array
+          items:
+            $ref: '#/components/schemas/SCMOrganization'
+        repositories:
+          type: array
+          items:
+            $ref: '#/components/schemas/SCMRepository'
+    SCMInitData:
+      properties:
+        admin_name:
+          type: string
+        admin_passwd:
+          type: string
+        admin_confirm_passwd:
+          type: string
+        admin_email:
+          type: string
+    SCMOrganization:
+      properties:
+        username:
+          type: string
+        full_name:
+          type: string
+        description:
+          type: string
+        website:
+          type: string
+        location:
+          type: string
+    SCMRepository:
+      properties:
+        name:
+          type: string
+        description:
+          type: string
+        private:
+          type: boolean
+        owner:
+          type: string
+        content_setup_type:
+          type: string
+        ep_commerce:
+          $ref: '#/components/schemas/EPObjectType'
+        bloomreach_archetype:
+          $ref: '#/components/schemas/BRObjectType'
+    EPObjectType:
+      properties:
+        version:
+          type: string
+        source_code_url:
+          type: string
+        extension_version:
+          type: string
+    BRObjectType:
+      properties:
+        archetype_version:
+          type: string
+        group_id:
+          type: string
+        artifact_id:
+          type: string
+        version:
+          type: string
+        package:
+          type: string
+        project_name:
+          type: string
+    SCMSpec:
+      properties:
+        scmId:
+          type: string
+        serverName:
+          type: string
+        ingressName:
+          type: string
+        image:
+          type: string
+        serviceName:
+          type: string
+        projectName:
+          type: string
+        host:
+          type: string
+    SCMGetSpec:
+      properties:
+        scmId:
+          type: string
+        serverName:
+          type: string
+        ingressName:
+          type: string
+        serviceName:
+          type: string
+        host:
+          type: string
+    CIList:
+      properties:
+        name:
+          type: string
+        images:
+          type: array
+          items:
+            $ref: '#/components/schemas/CIListImage'
+    CIListImage:
+      properties:
+        name:
+          type: string
+        secondary:
+          type: string
+    CI:
+      properties:
+        projectName:
+          type: string
+        ciId:
+          type: string
+        image:
+          type: string
+        secondImage:
+          type: string
+        scmURL:
+          type: string
+    CISpec:
+      properties:
+        ciId:
+          type: string
+        serverName:
+          type: string
+        ingressName:
+          type: string
+        image:
+          type: string
+        secondImage:
+          type: string
+        serviceName:
+          type: string
+        projectName:
+          type: string
+        host:
+          type: string
+        scmURL:
+          type: string
+    CIGetSpec:
+      properties:
+        ciId:
+          type: string
+        serverName:
+          type: string
+        ingressName:
+          type: string
+        serviceName:
+          type: string
+        host:
+          type: string
+        scmURL:
+          type: string          
+    Meta:
+      properties:
+        value1:
+          type: string
+        value2:
+          type: string
+        valueN:
+          type: string
+    ResourceList:
+      properties:
+        name:
+          type: string
+        images:
+          type: array
+          items:
+            $ref: '#/components/schemas/ResourceListImage'
+    ResourceListImage:
+      properties:
+        name:
+          type: string
+    SimpleResourceList:
+      properties:
+        name:
+          type: string
+        description:
+          type: string
+    DispatcherConfig:
+      properties:
+        clientId:
+          type: string
+        environmentId:
+          type: string
+        name:
+          type: string
+        data:
+          $ref: '#/components/schemas/DispatcherConfigData'
+    DispatcherConfigData:
+      properties:
+        bedrock.conf:
+          type: string
+        publish_dispatcher.any:
+          type: string
+    Toolbelt:
+      properties:
+        clientId:
+          type: string
+        url:
+          type: string
+        message:
+          type: string
+    Error:
+      required:
+        - code
+        - msg
+      properties:
+        code:
+          type: integer
+          format: int32
+        msg:
+          type: string

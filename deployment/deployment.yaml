@@ -1,0 +1,64 @@
+apiVersion: extensions/v1beta1
+kind: Deployment
+metadata:
+  labels:
+    app: bedrock-api
+  name: bedrock-api
+  namespace: bedrock
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: bedrock-api
+  template:
+    metadata:
+      labels:
+        app: bedrock-api
+    spec:
+      serviceAccountName: bedrock-api
+      volumes:
+      - name: vault-ssl-cert
+        secret:
+          secretName: grid-vault-default-vault-client-tls
+      containers:
+      - name: api
+        image: 
+        imagePullPolicy: Always
+        ports:
+        - containerPort: 8000
+        env:
+        - name: VAULT_ADDR
+          valueFrom:
+            secretKeyRef:
+              key: vault-address
+              name: bedrock-api-secrets
+        - name: VAULT_TOKEN
+          valueFrom:
+            secretKeyRef:
+              key: vault-token
+              name: bedrock-api-secrets
+        - name: AWS_ACCESS_KEY
+          valueFrom:
+            secretKeyRef:
+              key: aws_access_key
+              name: bedrock-api-secrets
+        - name: AWS_SECRET_KEY
+          valueFrom:
+            secretKeyRef:
+              key: aws_secret_key
+              name: bedrock-api-secrets
+        - name: GRID_EXTERNAL_DOMAIN
+          value:
+        - name: INGRESS_CLASS
+          value: contour
+        - name: INGRESS_FORCE_SSL_REDIRECT
+          value: "true"
+        - name: CERT_MANAGER_ISSUER
+          value: letsencrypt-prod-dns
+        - value: CERT_MANAGER_DNS_PROVIDER
+          name: prod-dns
+        volumeMounts:
+        - name: vault-ssl-cert
+          readOnly: true
+          mountPath: /etc/ssl/certs/vault-client-ca.crt
+          subPath: vault-client-ca.crt
